@@ -18,6 +18,14 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    @GetMapping
+    public ResponseEntity<?> getProduct(){
+        BaseResponse response = new BaseResponse();
+        response.setData(productService.getProduct());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PostMapping("/add")
     public ResponseEntity<?> addProduct(AddProductRequest request) {
         System.out.println("Hello add product");

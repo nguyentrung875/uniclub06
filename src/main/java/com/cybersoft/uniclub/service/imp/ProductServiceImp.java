@@ -1,5 +1,6 @@
 package com.cybersoft.uniclub.service.imp;
 
+import com.cybersoft.uniclub.dto.ProductDTO;
 import com.cybersoft.uniclub.entity.*;
 import com.cybersoft.uniclub.repository.ProductRepository;
 import com.cybersoft.uniclub.repository.VariantRepository;
@@ -9,6 +10,8 @@ import com.cybersoft.uniclub.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class ProductServiceImp implements ProductService {
@@ -56,5 +59,23 @@ public class ProductServiceImp implements ProductService {
         variantRepository.save(variantEntity);
 
         fileService.save(request.files());
+    }
+
+    @Override
+    public List<ProductDTO> getProduct() {
+
+        return productRepository.findAll().stream().map(item -> {
+            ProductDTO productDTO = new ProductDTO();
+            productDTO.setName(item.getName());
+            productDTO.setPrice(item.getPrice());
+            if (item.getVariants().size()>0){
+                productDTO.setImageLink("http://localhost:8080/file/" + item.getVariants().getFirst().getImages());
+            }else {
+                productDTO.setImageLink("");
+            }
+            return productDTO;
+        }).toList();
+
+//        return productDTOList;
     }
 }
