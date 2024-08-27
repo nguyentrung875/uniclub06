@@ -14,6 +14,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration //Các class chạy ở tầng cofig chạy trước app
 @EnableWebSecurity
@@ -43,8 +48,22 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, CustomFilter customFilter) throws Exception {
+    public CorsConfigurationSource corsSource(){
+        CorsConfiguration configuration = new CorsConfiguration();
+        //đường dẫn của bên frontend được phép gọi
+        configuration.setAllowedOrigins(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList("*"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        //đường dẫn bên backend áp dụng
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http, CustomFilter customFilter, CorsConfigurationSource corsSource) throws Exception {
         return http
+                .cors(cors -> cors.configurationSource(corsSource))
                 //Tắt dạng tần công tấn công csrf khi sử dụng các dịch vụ giống nhau
                 .csrf(csrf -> csrf.disable())
                 //Security không cho phép xài session
@@ -53,10 +72,11 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(request -> {
                     //Cho phép những đường dẫn này đi qua mà ko cần chứng thực
-                    request.requestMatchers("/authen").permitAll();
+                    request.requestMatchers("/authen", "/file/**").permitAll();
+                    request.requestMatchers(HttpMethod.GET, "/product").permitAll();
                     //Xài hasRole phải có prefix: ROLE_ADMIN. Dùng hasAuthority thì ko cần prefix
 //                    request.requestMatchers("/product").hasRole("ADMIN");
-                    request.requestMatchers("/product/**").hasAuthority("ROLE_ADMIN");
+                    request.requestMatchers(HttpMethod.POST, "/product/**").hasAuthority("ROLE_ADMIN");
                     //Tất cả các link còn lại phải chứng thực
                     request.anyRequest().authenticated();
                 })

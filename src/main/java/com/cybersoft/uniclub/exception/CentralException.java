@@ -26,13 +26,23 @@ public class CentralException{
         return new ResponseEntity<>(baseResponse, HttpStatus.OK);
     }
 
-    @ExceptionHandler({AuthenException.class})
-    public ResponseEntity<?> handleArgNotValid(MethodArgumentNotValidException e) {
+    @ExceptionHandler({SaveFileException.class})
+    public ResponseEntity<?> handleSaveFileException(Exception e) {
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setStatusCode(200);
         baseResponse.setMessage(e.getMessage());
         return new ResponseEntity<>(baseResponse, HttpStatus.OK);
     }
+
+
+
+//    @ExceptionHandler({MethodArgumentNotValidException.class})
+//    public ResponseEntity<?> handleArgNotValid(MethodArgumentNotValidException e) {
+//        BaseResponse baseResponse = new BaseResponse();
+//        baseResponse.setStatusCode(200);
+//        baseResponse.setMessage(e.getMessage());
+//        return new ResponseEntity<>(baseResponse, HttpStatus.OK);
+//    }
 
 
 }
