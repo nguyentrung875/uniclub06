@@ -53,6 +53,7 @@ public class SecurityConfig {
         //đường dẫn của bên frontend được phép gọi
         configuration.setAllowedOrigins(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("*"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         //đường dẫn bên backend áp dụng
@@ -73,10 +74,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> {
                     //Cho phép những đường dẫn này đi qua mà ko cần chứng thực
                     request.requestMatchers("/authen", "/file/**").permitAll();
-                    request.requestMatchers(HttpMethod.GET, "/product").permitAll();
+                    request.requestMatchers(HttpMethod.GET, "/product/**").permitAll();
                     //Xài hasRole phải có prefix: ROLE_ADMIN. Dùng hasAuthority thì ko cần prefix
 //                    request.requestMatchers("/product").hasRole("ADMIN");
-                    request.requestMatchers(HttpMethod.POST, "/product/**").hasAuthority("ROLE_ADMIN");
+//                    request.requestMatchers(HttpMethod.POST, "/product/**").hasAuthority("ROLE_ADMIN");
                     //Tất cả các link còn lại phải chứng thực
                     request.anyRequest().authenticated();
                 })
