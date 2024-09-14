@@ -5,7 +5,10 @@ import lombok.Data;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class RoleDTO {
+public class SizeDTO {
     private int id;
     private String name;
+    private Integer quantity;
+    private Double price;
+    private Integer sku;
 }

@@ -4,6 +4,7 @@ import com.cybersoft.uniclub.request.AddProductRequest;
 import com.cybersoft.uniclub.response.BaseResponse;
 import com.cybersoft.uniclub.service.FileService;
 import com.cybersoft.uniclub.service.ProductService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +19,19 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @GetMapping
-    public ResponseEntity<?> getProduct(){
+    @GetMapping("/{page}")
+    public ResponseEntity<?> getProduct(@PathVariable int page){
         BaseResponse response = new BaseResponse();
-        response.setData(productService.getProduct());
+        response.setData(productService.getProduct(page));
 
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/detail/{id}")
+    public ResponseEntity<?> getDetailProduct(@PathVariable int id, HttpServletRequest request){
+        BaseResponse response = new BaseResponse();
+        response.setStatusCode(200);
+        response.setData(productService.getDetailProduct(id));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
